@@ -1,0 +1,15 @@
+{%extends 'base.html'%}
+{%block title%}Homepage{%endblock%}
+{%block body%}
+    <form action="" method="POST">
+        <input id="title" name="title" type="text" placeholder="Job title"/>
+        <input id="yoe" name="yoe" type="number" placeholder="Required years of experience"/>
+        <button class="btn btn-primary" type="submit">Create job</button>
+    </form>
+    <p>Your jobs:</p>
+    <ul>
+        {% for job in jobs %}
+            <li>{{ job.title }} ({{ job.yoe }} years of experience)</li>
+        {% endfor %}
+    </ul>
+{%endblock%}

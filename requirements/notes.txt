@@ -1,0 +1,43 @@
+FUNCTIONALITY REQUIRED:
+- Keyword job search (only from the job description)
+- The system recommends the Top-K (K=10)most relevant job opportunities
+
+- After a job is posted, the system recommends the Top-N (N=10) most suitable candidates.
+- Employers also can browse candidate profiles by: Filter function (eg. skill, education, experience), Search function
+
+RECOMMENDATION ALGORITHMS:
+It can't be a stored value. It needs to be dynamic and calculated each time.
+When homepage/job page is opened, program can search db tables each time for 10 most suitable jobs/candidates.
+
+PAGES:
+Employer signup / login
+Post a job page (form)
+
+Job seeker signup / login
+Job seeker homepage (recommendation algo)
+
+
+DATABASE TABLES:
+1. Employer
+- email
+- password
+- job id creator array
+
+2. Job seeker
+- email
+- password
+- Full name
+- Education
+- Major/field of study
+- Years of experience
+
+3. Job posting
+- job id
+- Job title
+- Company information
+- Job description
+- Required education level (choice between no degree, bachelor, masters, phd)
+- Required skills (array)
+- Years of experience
+- Work mode (choice between Remote/On-site/Hybrid)
+- Job location

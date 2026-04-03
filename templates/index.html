@@ -1,0 +1,19 @@
+{%extends 'base.html'%}
+{%block title%}Homepage{%endblock%}
+{%block body%}
+    <form action="/" method="POST">
+        <input id="email" name="email" type="email" placeholder="email"/>
+        <input id="name" name="name" type="text" placeholder="name"/>
+        <input id="password" name="password" type="password" placeholder="password"/>
+        <button class="btn btn-primary" type="submit">Create</button>
+    </form>
+    <!-- display job seeker accounts-->
+    {%if job_seekers %}
+        {%for job_seeker in job_seekers%}
+            <p>{{job_seeker.email}} - {{job_seeker.name}} <a href="/edit/{{job_seeker.id}}">Edit</a> <a href="/delete/{{job_seeker.id}}">Delete</a></p>
+            <br />
+        {%endfor%}
+        {%else%}
+            <p>No job seekers in database</p>
+    {%endif%}
+{%endblock%}
