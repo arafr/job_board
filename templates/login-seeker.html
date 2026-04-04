@@ -1,0 +1,11 @@
+{%extends 'base.html'%}
+{%block title%}Homepage{%endblock%}
+{%block body%}
+    <h1>Job Seeker Login</h1>
+    <form action="" method="POST">
+        <input id="email" name="email" type="email" placeholder="email"/>
+        <input id="password" name="password" type="password" placeholder="password"/>
+        <button class="btn btn-primary" type="submit">Login</button>
+    </form>
+    <a href="{{url_for('signup_seeker')}}">Sign up instead</a>
+{%endblock%}

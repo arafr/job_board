@@ -1,9 +1,0 @@
-{%extends 'base.html'%}
-{%block title%}Homepage{%endblock%}
-{%block body%}
-    <form action="/edit/{{job_seeker.id}}" method="POST">
-        <input value={{job_seeker.email}} id="email" name="email" type="email"/>
-        <input value ={{job_seeker.name}} id="name" name="name" type="text"/>
-        <button class="btn btn-primary" type="submit">Save</button>
-    </form>      
-{%endblock%}

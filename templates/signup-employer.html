@@ -1,9 +1,11 @@
 {%extends 'base.html'%}
-{%block title%}Homepage{%endblock%}
+{%block title%}Sign up as employer{%endblock%}
 {%block body%}
+    <h1>Employer Sign Up</h1>
     <form action="" method="POST">
         <input id="email" name="email" type="email" placeholder="email"/>
         <input id="password" name="password" type="password" placeholder="password"/>
-        <button class="btn btn-primary" type="submit">Login</button>
+        <button class="btn btn-primary" type="submit">Sign up</button>
     </form>
+    <a href="{{url_for('login_employer')}}">Login instead</a>
 {%endblock%}

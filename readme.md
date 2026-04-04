@@ -1,4 +1,5 @@
+Set up instructions:
 python -m venv venv
 venv\Scripts\activate
-
-pip install flask Flask-SQLAlchemy flask-login / pip install requirements.txt
+pip install requirements.txt
+python app.py

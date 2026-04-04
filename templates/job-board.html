@@ -1,0 +1,26 @@
+{%extends 'base.html'%}
+{%block title%}Job Board{%endblock%}
+{%block body%}
+    <h1>All jobs:</h1>
+    <form method="get">
+        <input type="text" id="desc-search" name="desc_search" placeholder="Search jobs (based on description)..">
+        <button class="btn btn-primary" type="submit">Search</button>
+        <button class="btn btn-danger" type="reset, submit">Reset</button>
+    </form>
+    <ul>
+    {% for job in all_jobs %}
+        <li><a href="{{ url_for('job_details', job_id=job.id) }}">{{job.title}}</a></li>
+        <p>Company name: {{job.company_name}} <br/>
+        Description: {{job.description}}</p>
+    {% endfor %}
+    </ul>
+
+    <hr>
+    
+    <h1>10 best jobs for you:</h1>
+    <ul>
+    {% for job in best_jobs %}
+        <li><a href="{{ url_for('job_details', job_id=job.id) }}">{{job.title}} @ {{job.company_name}}</a></li>
+    {% endfor %}
+    </ul>
+{%endblock%}
