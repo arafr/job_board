@@ -35,17 +35,9 @@
 
         <label for="skills">Required skills (use ctrl to select multiple, max 5):</label>
         <select class="form-select" name="skills" id="skills" multiple aria-label="select skills" required>
-            <option value="azure">Azure</option>
-            <option value="aws">AWS</option>
-            <option value="gwp">GWP</option>
-            <option value="sql">SQL</option>
-            <option value="python">Python</option>
-            <option value="flask">Flask</option>
-            <option value="jinja2">Jinja2</option>
-            <option value="project management">Project Management</option>
-            <option value="microsoft office">Microsoft Office</option>
-            <option value="burp suite">Burp Suite</option>
-            <option value="nessus">Nessus</option>
+            {% for skill in skills %}
+                <option value="{{skill.name}}">{{skill.name}}</option>
+            {% endfor %}
         </select>
 
         <input id="yoe" name="yoe" type="number" placeholder="Required years of experience" required/>
@@ -88,7 +80,7 @@
     <ul>
         {% for job in jobs %}
             <!-- show job title with clickable link to view full job posting -->
-            <li><a href="{{ url_for('job_details', job_id=job.id) }}">{{ job.title }}</a></li>
+            <li><a href="{{ url_for('job_details', posting_id=job.id) }}">{{ job.title }}</a></li>
         {% endfor %}
     </ul>
 {%endblock%}

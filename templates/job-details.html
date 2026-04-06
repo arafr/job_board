@@ -1,13 +1,17 @@
 {%extends 'base.html'%}
 {%block title%}Job Board{%endblock%}
 {%block body%}
-    <h1>Job title: {{ job.title }}</h1>
-    <p><strong>Company:</strong> {{ job.company_name }}</p>
-    <p><strong>Email:</strong> {{ job.company_email }}</p>
-    <p><strong>Description:</strong> {{ job.description }}</p>
-    <p><strong>Education requirement:</strong> {{ job.education }}</p>
-    <p><strong>Required skills:</strong> {{ job.skills }}</p>
-    <p><strong>Years of experience required:</strong> {{ job.yoe }}</p>
-    <p><strong>Work mode:</strong> {{ job.work_mode }}</p>
-    <p><strong>Location:</strong> {{ job.location }}</p>
+    <h1>Job title: {{ posting.title }}</h1>
+    <p><strong>Company:</strong> {{ posting.company_name }}</p>
+    <p><strong>Email:</strong> {{ posting.company_email }}</p>
+    <p><strong>Description:</strong> {{ posting.description }}</p>
+    <p><strong>Education requirement:</strong> {{ posting.education }}</p>
+
+    <p><strong>Required skills:</strong> 
+        {% for skill in posting.skills %}{{ skill.name }}, {% endfor %}
+    </p>
+    
+    <p><strong>Years of experience required:</strong> {{ posting.yoe }}</p>
+    <p><strong>Work mode:</strong> {{ posting.work_mode }}</p>
+    <p><strong>Location:</strong> {{ posting.location }}</p>
 {%endblock%}

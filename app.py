@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 # models
 app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///database.db'
-from models import db, JobSeeker,Employer,JobPosting
+from models import db, Seeker,Employer,Posting, Skill
 db.init_app(app)
 
 from flask_login import LoginManager, login_required, logout_user, current_user, login_user
@@ -23,7 +23,7 @@ app.secret_key = os.environ.get("SECRET_KEY",'mjrajrjk294999$(@(@(.)))')
 def load_user(id):
     if 'type' in session:
         if session['type'] == 'seeker':
-            return JobSeeker.query.filter_by(id=int(id)).first()
+            return Seeker.query.filter_by(id=int(id)).first()
         elif session['type'] == 'employer':
             return Employer.query.filter_by(id=int(id)).first()
     else:
@@ -46,33 +46,122 @@ def signup_seeker():
         education = request.form['education']
         major = request.form['major']
         yoe = request.form['yoe']
+        hash = bcrypt.generate_password_hash(password).decode('utf-8')
+        if Seeker.query.filter_by(email=email).first():
+            flash('Email already exists, please login instead')
+            return redirect('/signup-seeker')
+        
+        prefered_work_mode = request.form['prefered_work_mode']
+        prefered_location = request.form['prefered_location']
+
         skills = request.form.getlist('skills')
         if len(skills) > 5:
             flash('Please select a maximum of 5 skills')
             return redirect('/signup-seeker')
-        skills_string = ""
-        for skill in skills:
-            skills_string += skill + ","    
-        skills_string = skills_string[:-1] # remove last comma
-        prefered_work_mode = request.form['prefered_work_mode']
-        prefered_location = request.form['prefered_location']
 
-        hash = bcrypt.generate_password_hash(password).decode('utf-8')
-        if JobSeeker.query.filter_by(email=email).first():
-            flash('Email already exists, please login instead')
-            return redirect('/signup-seeker')
+        new_seeker = Seeker(email=email,name=name,hash=hash,education=education,major=major,yoe=yoe,prefered_work_mode=prefered_work_mode,prefered_location=prefered_location)
+        
+        # append skills into new job seeker
+        for skill_name in skills:
+            skill = Skill.query.filter_by(name=skill_name).first()
+            new_seeker.skills.append(skill)
 
-        new_job_seeker = JobSeeker(email=email,name=name,hash=hash,education=education,major=major,yoe=yoe,skills=skills_string,prefered_work_mode=prefered_work_mode,prefered_location=prefered_location)
         try:
-            db.session.add(new_job_seeker)
+            db.session.add(new_seeker)
             db.session.commit()
             flash('Successfully created account')
-            login_user(new_job_seeker)
-            return redirect('/job-board')
+            return redirect('/login-seeker')
         except Exception as e:
             print(f"Error occured: {e}")
     elif request.method=='GET':
-        return render_template("signup-seeker.html")
+        skills = Skill.query.all()
+        return render_template("signup-seeker.html",skills=skills)
+
+@app.route('/login-seeker',methods=['GET','POST'])
+def login_seeker():
+    if current_user.is_authenticated:
+        flash('You are already logged in')
+        return redirect('/job-board/')
+    else:
+        if request.method=='GET':
+            return render_template('login-seeker.html')
+        elif request.method=='POST':
+            email = request.form['email']
+            password = request.form['password']
+            # authenticate user here
+            job_seeker = Seeker.query.filter_by(email=email).first()
+            if job_seeker and bcrypt.check_password_hash(job_seeker.hash, password):
+                login_user(job_seeker)
+                flash('Login successful')
+                session['type'] = 'seeker'
+                return redirect('/job-board/')
+            else:
+                flash('Invalid email or password')
+                return redirect('/login-seeker')
+
+# job board
+@app.route("/job-board/")
+@login_required
+def job_board():
+    if current_user.type != 'seeker':
+        flash('Only job seekers can view the job board')
+        return redirect('/')
+
+    # REQUIREMENT 1: ALL JOBS WITH KEYWORD SEARCH (JOB DESC) 
+    desc_search = request.args.get('desc_search')
+    if desc_search:
+        all_postings = Posting.query.filter(Posting.description.contains(desc_search)).all()
+    else:
+        all_postings = Posting.query.all()
+
+    # REQUIREMENT 2: BEST MATCHING JOBS
+
+    # education level of seeker needs to be equal or higher than job posting
+    education = current_user.education
+    if education == 'high school':
+        education_level = ['high school']
+    elif education == "bachelors degree":
+        education_level = ['high school','bachelors degree']
+    elif education == "masters degree":
+        education_level = ['high school','bachelors degree','masters degree']
+    elif education == "phd":
+        education_level = ['high school','bachelors degree','masters degree','phd']
+    else:
+        flash('Invalid education level')
+        return redirect('/')
+    
+    '''
+    education 20
+    yoe 20
+    skills 5 skills x 5 points each = 25
+    prefered_work_mode= 15
+    prefered_location= 20
+    Total = 100
+    '''
+
+    # calculate match score for jobs
+    best_postings = Posting.query.all()
+    for posting in best_postings:
+        posting.match_score = 0
+        if posting.education in education_level:
+            posting.match_score += 20
+        if posting.yoe <= current_user.yoe:
+            posting.match_score += 20
+        if posting.work_mode == current_user.prefered_work_mode:
+            posting.match_score += 15
+        if posting.location == current_user.prefered_location:
+            posting.match_score += 20
+
+        # each skill match adds 5 points
+        for skill in current_user.skills:
+            if skill in posting.skills:
+                posting.match_score += 5
+    
+    # show top 10 jobs with highest match_score
+    from operator import attrgetter
+    best_postings = sorted(best_postings, key=attrgetter("match_score"), reverse=True)[:10]
+    
+    return render_template("job-board.html",all_postings=all_postings, best_postings=best_postings)
 
 # create employer account
 @app.route("/signup-employer",methods=['GET','POST'])
@@ -92,34 +181,11 @@ def signup_employer():
             db.session.add(new_employer)
             db.session.commit()
             flash("Successfully created account")
-            login_user(new_employer)
-            return redirect('/create-job')
+            return redirect('/login-employer')
         except Exception as e:
             print(f"Error occured: {e}")
     elif request.method=='GET':
         return render_template("signup-employer.html")
-
-@app.route('/login-seeker',methods=['GET','POST'])
-def login_seeker():
-    if current_user.is_authenticated:
-        flash('You are already logged in')
-        return redirect('/job-board/')
-    else:
-        if request.method=='GET':
-            return render_template('login-seeker.html')
-        elif request.method=='POST':
-            email = request.form['email']
-            password = request.form['password']
-            # authenticate user here
-            job_seeker = JobSeeker.query.filter_by(email=email).first()
-            if job_seeker and bcrypt.check_password_hash(job_seeker.hash, password):
-                login_user(job_seeker)
-                flash('Login successful')
-                session['type'] = 'seeker'
-                return redirect('/job-board/')
-            else:
-                flash('Invalid email or password')
-                return redirect('/login-seeker')
 
 @app.route('/login-employer',methods=['GET','POST'])
 def login_employer():
@@ -143,15 +209,6 @@ def login_employer():
                 flash('Invalid email or password')
                 return redirect('/login-employer')
 
-@app.route("/logout")
-def logout():
-    if current_user.is_authenticated:
-        logout_user()
-        flash("Logged out successfully.")
-    else:
-        flash("You are not logged in.")
-    return redirect('/')
-
 @app.route("/create-job/",methods=['GET','POST'])
 @login_required
 def create_job():
@@ -159,8 +216,9 @@ def create_job():
         flash('Only employers can create job postings')
         return redirect('/')
     if request.method=='GET':
-        jobs = JobPosting.query.filter_by(created_by=current_user.id).all()
-        return render_template("create-job.html", jobs=jobs)
+        jobs = Posting.query.filter_by(created_by=current_user.id).all()
+        skills = Skill.query.all()
+        return render_template("create-job.html", jobs=jobs,skills=skills)
     elif request.method=='POST':
         title = request.form['title']
         company_name = request.form['company_name']
@@ -172,17 +230,19 @@ def create_job():
         if len(skills) > 5:
             flash('Please select a maximum of 5 skills')
             return redirect('/create-job/')
-        skills_string = ""
-        for skill in skills:
-            skills_string += skill + ","
-        skills_string = skills_string[:-1] # remove last comma
- 
+        
         yoe = request.form['yoe']
         work_mode = request.form['work_mode']
         location = request.form['location']
-        new_job_posting = JobPosting(title=title, company_name=company_name, company_email=company_email, education=education,skills=skills_string,description=description, yoe=yoe, work_mode=work_mode, location=location, created_by=current_user.id)
+        new_posting = Posting(title=title, company_name=company_name, company_email=company_email, education=education,description=description, yoe=yoe, work_mode=work_mode, location=location, created_by=current_user.id)
+        
+        # append skills into new job seeker
+        for skill_name in skills:
+            skill = Skill.query.filter_by(name=skill_name).first()
+            new_posting.skills.append(skill)
+        
         try:
-            db.session.add(new_job_posting)
+            db.session.add(new_posting)
             db.session.commit()
             flash('Job created successfully')
             return redirect('/create-job/')
@@ -191,81 +251,109 @@ def create_job():
             flash('An error occurred while creating the job')
             return redirect('/create-job/')
 
-# job board
-@app.route("/job-board/")
-@login_required
-def job_board():
-    if current_user.type != 'seeker':
-        flash('Only job seekers can view the job board')
-        return redirect('/')
-
-    # REQUIREMENT 1: ALL JOBS WITH KEYWORD SEARCH (JOB DESC) 
-    desc_search = request.args.get('desc_search')
-    if desc_search:
-        all_jobs = JobPosting.query.filter(JobPosting.description.contains(desc_search)).all()
-    else:
-        all_jobs = JobPosting.query.all()
+# individual job details page
+@app.route("/job-details/<int:posting_id>/")
+def job_details(posting_id):
+    posting = Posting.query.get_or_404(posting_id)
+    return render_template("job-details.html", posting=posting)
 
     # REQUIREMENT 2: BEST MATCHING JOBS
-    # get top 10 best matching jobs for seeker
 
     # education level of seeker needs to be equal or higher than job posting
     education = current_user.education
     if education == 'high school':
-        education_levels = ['high school']
+        education_level = ['high school']
     elif education == "bachelors degree":
-        education_levels = ['high school','bachelors degree']
+        education_level = ['high school','bachelors degree']
     elif education == "masters degree":
-        education_levels = ['high school','bachelors degree','masters degree']
+        education_level = ['high school','bachelors degree','masters degree']
     elif education == "phd":
-        education_levels = ['high school','bachelors degree','masters degree','phd']
+        education_level = ['high school','bachelors degree','masters degree','phd']
     else:
         flash('Invalid education level')
         return redirect('/')
-
-    # initial matching based on seeker preferences
-    matching_jobs = JobPosting.query.filter(
-        JobPosting.location == current_user.prefered_location,
-        JobPosting.work_mode == current_user.prefered_work_mode,
-        JobPosting.education.in_(education_levels),
-        JobPosting.yoe <= current_user.yoe,
-    ).all()
-
-    # matching based on seeker and job posting skill overlap
-    current_user_skills = current_user.skills.split(",")
-    best_jobs = []
-    for job in matching_jobs:
-        job_skills = job.skills.split(",")
-        matching_skills = set(current_user_skills) & set(job_skills)
-        job.matching_skill_count = len(matching_skills)
-        best_jobs.append(job)
     
-    def get_matching_skill_count(job):
-        return job.matching_skill_count
+    '''
+    education 20
+    yoe 20
+    skills 5 skills x 5 points each = 25
+    prefered_work_mode= 15
+    prefered_location= 20
+    Total = 100
+    '''
 
-    top_10 = sorted(best_jobs, key=get_matching_skill_count, reverse=True)[:10]
+    # calculate match score for jobs
+    best_postings = Posting.query.all()
+    for posting in best_postings:
+        posting.match_score = 0
+        if posting.education in education_level:
+            posting.match_score += 20
+        if posting.yoe <= current_user.yoe:
+            posting.match_score += 20
+        if posting.work_mode == current_user.prefered_work_mode:
+            posting.match_score += 15
+        if posting.location == current_user.prefered_location:
+            posting.match_score += 20
 
-    return render_template("job-board.html",all_jobs=all_jobs, best_jobs=top_10)
-
-# individual job details page
-@app.route("/job-details/<int:job_id>/")
-def job_details(job_id):
-    job = JobPosting.query.get_or_404(job_id)
-    return render_template("job-details.html", job=job)
+        # each skill match adds 5 points
+        for skill in current_user.skills:
+            if skill in posting.skills:
+                posting.match_score += 5
+    
+    # show top 10 jobs with highest match_score
+    from operator import attrgetter
+    best_postings = sorted(best_postings, key=attrgetter("match_score"), reverse=True)[:10]
+    
+    return render_template("job-board.html",all_postings=all_postings, best_postings=best_postings)
 
 # talent board
 @app.route("/talent-board")
 @login_required
 def talent_board():
     # show all job seekers by default, if any filters are used, apply them
-    # filter 
+    # get value from url parameters (args)
     keyword = request.args.get('keyword')
-    education_level = request.args.get('education')
+    education = request.args.get('education')
     skills = request.args.getlist('skills')
     yoe = request.args.get('yoe')
 
-    all_seekers = JobSeeker.query.all()
-    return render_template("talent-board.html",all_seekers=all_seekers)
+    # keyword search will look through all of seeker's attributes and try to find a match.
+    filters =[]
+    if keyword:
+        filters.append(
+            Seeker.education.contains(keyword) |
+            Seeker.yoe.contains(keyword) |
+            Seeker.skills.any(Skill.name.contains(keyword)) |
+            Seeker.name.contains(keyword) |
+            Seeker.major.contains(keyword) |
+            Seeker.prefered_work_mode.contains(keyword) |
+            Seeker.email.contains(keyword) |
+            Seeker.prefered_location.contains(keyword)
+        )
+    if education:
+        filters.append(Seeker.education == education)
+    if yoe:
+        filters.append(Seeker.yoe >= int(yoe))
+    if skills:
+        filters.append(Seeker.skills.any(Skill.name.in_(skills)))
+
+    # if filters exist, apply them to query, otherwise show all seekers
+    if filters:
+        seekers_query = Seeker.query.filter(*filters).all()
+    else:
+        seekers_query = Seeker.query.all()
+
+    skills = Skill.query.all()
+    return render_template("talent-board.html",seekers=seekers_query, skills=skills)
+
+@app.route("/logout")
+def logout():
+    if current_user.is_authenticated:
+        logout_user()
+        flash("Logged out successfully.")
+    else:
+        flash("You are not logged in.")
+    return redirect('/')
 
 if __name__=="__main__":
     with app.app_context():   

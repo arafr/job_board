@@ -1,8 +1,14 @@
 # Database Structure
 
 # Job Board Matching Algorithm:
-1. First, check job posting database and make a list of jobs with matching criteria (education level, years of experience, work mode, location). Eliminate jobs with that don't match seeker.
-2. From the previous list, based on number of matching skills (0-5), get top 10 most suitable jobs.
+Based on the below factors, a match score is given to each job posting. Top 10 jobs with highest match score is shown to seeker.
+
+education 20
+yoe 20
+Skills 5 skills x 5 points each = 25
+prefered_work_mode= 15
+prefered_location= 20
+Total = 100
 
 # Set up instructions:
 
@@ -17,6 +23,9 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 ```
+python generate_skills.py
+```
+```
 python app.py
 ```
 
@@ -29,6 +38,9 @@ source venv/bin/activate
 ```
 ```
 pip install -r requirements.txt
+```
+```
+python3 generate_skills.py
 ```
 ```
 python3 app.py

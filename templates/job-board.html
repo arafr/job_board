@@ -8,19 +8,22 @@
         <button class="btn btn-danger" type="reset, submit">Reset</button>
     </form>
     <ul>
-    {% for job in all_jobs %}
-        <li><a href="{{ url_for('job_details', job_id=job.id) }}">{{job.title}}</a></li>
-        <p>Company name: {{job.company_name}} <br/>
-        Description: {{job.description}}</p>
+    {% for posting in all_postings %}
+        <li><a href="{{ url_for('job_details', posting_id=posting.id) }}">{{posting.title}}</a></li>
+        <p>Company name: {{posting.company_name}} <br/>
+        Description: {{posting.description}}</p>
     {% endfor %}
     </ul>
 
     <hr>
     
-    <h1>Matching jobs:</h1>
+    <h1>Best jobs for you:</h1>
     <ul>
-    {% for job in best_jobs %}
-        <li><a href="{{ url_for('job_details', job_id=job.id) }}">{{job.title}} @ {{job.company_name}}</a></li>
+    {% for posting in best_postings %}
+        <li><a href="{{ url_for('job_details', posting_id=posting.id) }}">{{posting.title}}</a>  (Match score: {{posting.match_score}}/100) <br/>
+            Company name: {{posting.company_name}}<br/>
+            Description: {{posting.description}}<br/><br/>
+        </li>
     {% endfor %}
     </ul>
 {%endblock%}
