@@ -2,6 +2,20 @@
 {%block title%}Homepage{%endblock%}
 {%block body%}
     <h1>Welcome to the Job Portal</h1>
-    <a href="{{url_for('signup_seeker')}}"><button class="btn btn-primary">Job Seeker</button></a>
-    <a href="{{url_for('signup_employer')}}"><button class="btn btn-success">Employer</button></a>
+    <hr>
+
+    <h2>Employers:</h2>
+    <a href="{{url_for('signup_employer')}}"><button class="btn btn-success">Sign up as an employer</button></a>
+    <a href="{{url_for('login_employer')}}"><button class="btn btn-success">Login</button></a>
+    <a href="{{url_for('create_job')}}"><button class="btn btn-success">Create job posting</button></a>
+    <a href="{{url_for('talent_board')}}"><button class="btn btn-success">Talent board</button></a>
+    <hr>
+
+    <h2>Seekers:</h2>
+    <a href="{{url_for('signup_seeker')}}"><button class="btn btn-primary">Sign up as a seeker</button></a>
+    <a href="{{url_for('login_employer')}}"><button class="btn btn-primary">Login</button></a>
+    <a href="{{url_for('job_board')}}"><button class="btn btn-primary">Job Board</button></a>
+
+    <hr>
+    <a href="{{url_for('logout')}}"><button class="btn btn-danger">Logout</button></a>
 {%endblock%}
