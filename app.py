@@ -32,7 +32,7 @@ def load_user(id):
 # home page
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html",current_user=current_user)
 
 # create job seeker account
 @app.route("/signup-seeker",methods=['GET','POST'])
@@ -79,9 +79,9 @@ def signup_seeker():
 
 @app.route('/login-seeker',methods=['GET','POST'])
 def login_seeker():
-    if current_user.is_authenticated:
-        flash('You are already logged in')
-        return redirect('/job-board/')
+    if current_user.is_authenticated and current_user.type == 'employer':
+        flash('Please logout as employer first.')
+        return redirect('/')
     else:
         if request.method=='GET':
             return render_template('login-seeker.html')
@@ -104,7 +104,7 @@ def login_seeker():
 @login_required
 def job_board():
     if current_user.type != 'seeker':
-        flash('Only job seekers can view the job board')
+        flash('Only job seekers can view the job board. Please log out first.')
         return redirect('/')
 
     # REQUIREMENT 1: ALL JOBS WITH KEYWORD SEARCH (JOB DESC) 
@@ -166,8 +166,9 @@ def job_board():
 # create employer account
 @app.route("/signup-employer",methods=['GET','POST'])
 def signup_employer():
-    if current_user.is_authenticated:
-        return redirect('/create-job/')
+    if current_user.is_authenticated and current_user.type == 'seeker':
+        flash('You are logged in as a job seeker. Please log out first.')
+        return redirect('/')
     if request.method=='POST':
         email = request.form['email']
         password = request.form['password']
@@ -189,9 +190,9 @@ def signup_employer():
 
 @app.route('/login-employer',methods=['GET','POST'])
 def login_employer():
-    if current_user.is_authenticated:
-        flash('You are already logged in')
-        return redirect('/create-job/')
+    if current_user.is_authenticated and current_user.type == 'seeker':
+        flash('You are logged in as a job seeker. Please log out.')
+        return redirect('/')
     else:
         if request.method=='GET':
             return render_template('login-employer.html')
@@ -204,7 +205,7 @@ def login_employer():
                 login_user(employer)
                 flash('Login successful')
                 session['type'] = 'employer'
-                return redirect('/create-job/')
+                return redirect('/')
             else:
                 flash('Invalid email or password')
                 return redirect('/login-employer')
@@ -213,7 +214,7 @@ def login_employer():
 @login_required
 def create_job():
     if current_user.type != 'employer':
-        flash('Only employers can create job postings')
+        flash('Only employers can create job postings. Please log out first.')
         return redirect('/')
     if request.method=='GET':
         jobs = Posting.query.filter_by(created_by=current_user.id).all()
