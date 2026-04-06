@@ -17,7 +17,7 @@
 
     <hr>
     
-    <h1>10 best jobs for you:</h1>
+    <h1>Matching jobs:</h1>
     <ul>
     {% for job in best_jobs %}
         <li><a href="{{ url_for('job_details', job_id=job.id) }}">{{job.title}} @ {{job.company_name}}</a></li>

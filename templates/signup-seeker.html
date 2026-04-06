@@ -3,11 +3,11 @@
 {%block body%}
     <h1>Job Seeker Sign Up</h1>
     <form action="" method="POST">
-        <input id="email" name="email" type="email" placeholder="email"/>
-        <input id="name" name="name" type="text" placeholder="Full name"/>
-        <input id="password" name="password" type="password" placeholder="password"/>
+        <input id="email" name="email" type="email" placeholder="email" required/>
+        <input id="name" name="name" type="text" placeholder="Full name" required/>
+        <input id="password" name="password" type="password" placeholder="password" required/>
 
-        <select id="education" name="education">
+        <select id="education" name="education" required>
             <option value="" disabled selected>Education</option>
             <option value="high school">High School</option>
             <option value="bachelors degree">Bachelor's Degree</option>
@@ -15,11 +15,11 @@
             <option value="phd">PhD</option>
         </select>
 
-        <input id="major" name="major" type="text" placeholder="Major"/>
-        <input id="yoe" name="yoe" type="number" placeholder="Years of Experience"/>
+        <input id="major" name="major" type="text" placeholder="Major" required/>
+        <input id="yoe" name="yoe" type="number" placeholder="Years of Experience" required/>
 
         <label for="skills">Skills (use ctrl to select multiple, max 5):</label>
-        <select class="form-select" name="skills" id="skills" multiple aria-label="select skills">
+        <select class="form-select" name="skills" id="skills" multiple aria-label="select skills" required>
             <option value="azure">Azure</option>
             <option value="aws">AWS</option>
             <option value="gwp">GWP</option>
@@ -33,14 +33,14 @@
             <option value="nessus">Nessus</option>
         </select>
         
-        <select id="prefered_work_mode" name="prefered_work_mode">
+        <select id="prefered_work_mode" name="prefered_work_mode" required>
             <option value="" disabled selected>Prefered Work Mode</option>
             <option value="remote">Remote</option>
-            <option value="on_site">On-site</option>
+            <option value="on-site">On-site</option>
             <option value="hybrid">Hybrid</option>
         </select>
 
-        <select id="prefered_location" name="prefered_location">
+        <select id="prefered_location" name="prefered_location" required>
             <option value="" disabled selected>Prefered Location</option>
             <option value="Sydney">Sydney</option>
             <option value="Melbourne">Melbourne</option>

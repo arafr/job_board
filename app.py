@@ -23,9 +23,9 @@ app.secret_key = os.environ.get("SECRET_KEY",'mjrajrjk294999$(@(@(.)))')
 def load_user(id):
     if 'type' in session:
         if session['type'] == 'seeker':
-            return JobSeeker.query.get(int(id))
+            return JobSeeker.query.filter_by(id=int(id)).first()
         elif session['type'] == 'employer':
-            return Employer.query.get(int(id))
+            return Employer.query.filter_by(id=int(id)).first()
     else:
         return None
 
@@ -144,9 +144,12 @@ def login_employer():
                 return redirect('/login-employer')
 
 @app.route("/logout")
-@login_required
 def logout():
-    logout_user()
+    if current_user.is_authenticated:
+        logout_user()
+        flash("Logged out successfully.")
+    else:
+        flash("You are not logged in.")
     return redirect('/')
 
 @app.route("/create-job/",methods=['GET','POST'])
@@ -204,8 +207,7 @@ def job_board():
         all_jobs = JobPosting.query.all()
 
     # REQUIREMENT 2: BEST MATCHING JOBS
-    # get top 10 best matching jobs for seeker and pass to template
-    best_jobs = []
+    # get top 10 best matching jobs for seeker
 
     # education level of seeker needs to be equal or higher than job posting
     education = current_user.education
@@ -221,17 +223,29 @@ def job_board():
         flash('Invalid education level')
         return redirect('/')
 
-    # match seeker skills with job posting skills (top 10)
-    current_user_skills = current_user.skills.split(",")
-    
-    best_jobs = JobPosting.query.filter(
+    # initial matching based on seeker preferences
+    matching_jobs = JobPosting.query.filter(
         JobPosting.location == current_user.prefered_location,
         JobPosting.work_mode == current_user.prefered_work_mode,
         JobPosting.education.in_(education_levels),
-        JobPosting.yoe <= current_user.yoe
+        JobPosting.yoe <= current_user.yoe,
     ).all()
 
-    return render_template("job-board.html",all_jobs=all_jobs, best_jobs=best_jobs)
+    # matching based on seeker and job posting skill overlap
+    current_user_skills = current_user.skills.split(",")
+    best_jobs = []
+    for job in matching_jobs:
+        job_skills = job.skills.split(",")
+        matching_skills = set(current_user_skills) & set(job_skills)
+        job.matching_skill_count = len(matching_skills)
+        best_jobs.append(job)
+    
+    def get_matching_skill_count(job):
+        return job.matching_skill_count
+
+    top_10 = sorted(best_jobs, key=get_matching_skill_count, reverse=True)[:10]
+
+    return render_template("job-board.html",all_jobs=all_jobs, best_jobs=top_10)
 
 # individual job details page
 @app.route("/job-details/<int:job_id>/")
@@ -239,7 +253,19 @@ def job_details(job_id):
     job = JobPosting.query.get_or_404(job_id)
     return render_template("job-details.html", job=job)
 
+# talent board
+@app.route("/talent-board")
+@login_required
+def talent_board():
+    # show all job seekers by default, if any filters are used, apply them
+    # filter 
+    keyword = request.args.get('keyword')
+    education_level = request.args.get('education')
+    skills = request.args.getlist('skills')
+    yoe = request.args.get('yoe')
 
+    all_seekers = JobSeeker.query.all()
+    return render_template("talent-board.html",all_seekers=all_seekers)
 
 if __name__=="__main__":
     with app.app_context():   
