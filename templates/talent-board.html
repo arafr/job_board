@@ -14,18 +14,11 @@
             <option value="phd">PhD</option>
         </select>
 
-        <select class="form-select" name="skills" id="skills" multiple aria-label="select skills">
-            <option value="azure">Azure</option>
-            <option value="aws">AWS</option>
-            <option value="gwp">GWP</option>
-            <option value="sql">SQL</option>
-            <option value="python">Python</option>
-            <option value="flask">Flask</option>
-            <option value="jinja2">Jinja2</option>
-            <option value="project management">Project Management</option>
-            <option value="microsoft office">Microsoft Office</option>
-            <option value="burp suite">Burp Suite</option>
-            <option value="nessus">Nessus</option>
+        <select class="form-select" name="skills" id="skills" aria-label="select skills">
+            <option value="" disabled selected>Skill</option>
+            {% for skill in skills %}
+                <option value="{{skill.name}}">{{skill.name}}</option>
+            {% endfor %}
         </select>
 
         <input id="yoe" name="yoe" type="number" placeholder="Years of Experience"/>
@@ -34,13 +27,17 @@
         <button class="btn btn-danger" type="reset, submit">Reset</button>
     </form>
     <ul>
-    {% for seeker in all_seekers %}
+    {% for seeker in seekers %}
         <li>{{seeker.name}}</li>
         <p>{{seeker.email}} <br/>
             Education level: {{seeker.education}}<br/>
             Major: {{seeker.major}}<br/>
             YOE: {{seeker.yoe}}<br/>
-            Skills: {{seeker.skills}}
+            Skills: {% for skill in seeker.skills %}
+                {{skill.name}}, 
+            {% endfor %}<br/>
+            Prefered location: {{seeker.prefered_location}}<br/>
+            Prefered work mode: {{seeker.prefered_work_mode}}<br/>
         </p>
     {% endfor %}
     </ul>
