@@ -340,6 +340,8 @@ def talent_board():
     # if filters exist, apply them to query, otherwise show all seekers
     if filters:
         seekers_query = Seeker.query.filter(*filters).all()
+        if seekers_query == []:
+            flash('No seekers found matching your criteria.')
     else:
         seekers_query = Seeker.query.all()
 

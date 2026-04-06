@@ -26,9 +26,10 @@
         <button class="btn btn-primary" type="submit">Search</button>
         <button class="btn btn-danger" type="reset, submit">Reset</button>
     </form>
+    <br />
     <ul>
     {% for seeker in seekers %}
-        <li>{{seeker.name}}</li>
+        <li><b>{{seeker.name}}</b></li>
         <p>{{seeker.email}} <br/>
             Education level: {{seeker.education}}<br/>
             Major: {{seeker.major}}<br/>
