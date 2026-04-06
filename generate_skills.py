@@ -24,6 +24,3 @@ def generate_skills():
             new_skill = Skill(name=skill)
             db.session.add(new_skill)
     db.session.commit()
-
-with app.app_context():
-    generate_skills()

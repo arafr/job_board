@@ -21,9 +21,6 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 ```
-python generate_skills.py
-```
-```
 python app.py
 ```
 
@@ -36,9 +33,6 @@ source venv/bin/activate
 ```
 ```
 pip install -r requirements.txt
-```
-```
-python3 generate_skills.py
 ```
 ```
 python3 app.py
