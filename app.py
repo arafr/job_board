@@ -334,7 +334,7 @@ def talent_board():
     if education:
         filters.append(Seeker.education == education)
     if yoe:
-        filters.append(Seeker.yoe >= int(yoe))
+        filters.append(Seeker.yoe == int(yoe))
     if skills:
         filters.append(Seeker.skills.any(Skill.name.in_(skills)))
 
