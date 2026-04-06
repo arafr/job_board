@@ -254,21 +254,21 @@ def create_job():
 # individual job details page
 @app.route("/job-details/<int:posting_id>/")
 def job_details(posting_id):
+    # get job posting details
     posting = Posting.query.get_or_404(posting_id)
-    return render_template("job-details.html", posting=posting)
 
-    # REQUIREMENT 2: BEST MATCHING JOBS
+    # REQUIREMENT: GET BEST MATCHING SEEKERS FOR THE JOB POSTING
 
     # education level of seeker needs to be equal or higher than job posting
-    education = current_user.education
-    if education == 'high school':
-        education_level = ['high school']
-    elif education == "bachelors degree":
-        education_level = ['high school','bachelors degree']
-    elif education == "masters degree":
-        education_level = ['high school','bachelors degree','masters degree']
-    elif education == "phd":
-        education_level = ['high school','bachelors degree','masters degree','phd']
+    posting_education_requirement = posting.education
+    if posting_education_requirement == 'high school':
+        seeker_education_required = ['high school', 'bachelors degree', 'masters degree', 'phd']
+    elif posting_education_requirement == "bachelors degree":
+        seeker_education_required = ['bachelors degree', 'masters degree', 'phd']
+    elif posting_education_requirement == "masters degree":
+        seeker_education_required = ['masters degree', 'phd']
+    elif posting_education_requirement == "phd":
+        seeker_education_required = ['phd']
     else:
         flash('Invalid education level')
         return redirect('/')
@@ -283,28 +283,28 @@ def job_details(posting_id):
     '''
 
     # calculate match score for jobs
-    best_postings = Posting.query.all()
-    for posting in best_postings:
-        posting.match_score = 0
-        if posting.education in education_level:
-            posting.match_score += 20
-        if posting.yoe <= current_user.yoe:
-            posting.match_score += 20
-        if posting.work_mode == current_user.prefered_work_mode:
-            posting.match_score += 15
-        if posting.location == current_user.prefered_location:
-            posting.match_score += 20
+    best_seekers = Seeker.query.all()
+    for seeker in best_seekers:
+        seeker.match_score = 0
+        if seeker.education in seeker_education_required:
+            seeker.match_score += 20
+        if seeker.yoe >= posting.yoe:
+            seeker.match_score += 20
+        if posting.work_mode == seeker.prefered_work_mode:
+            seeker.match_score += 15
+        if posting.location == seeker.prefered_location:
+            seeker.match_score += 20
 
         # each skill match adds 5 points
-        for skill in current_user.skills:
+        for skill in seeker.skills:
             if skill in posting.skills:
-                posting.match_score += 5
+                seeker.match_score += 5
     
-    # show top 10 jobs with highest match_score
+    # show top 10 seekers with highest match_score
     from operator import attrgetter
-    best_postings = sorted(best_postings, key=attrgetter("match_score"), reverse=True)[:10]
+    best_seekers = sorted(best_seekers, key=attrgetter("match_score"), reverse=True)[:10]
     
-    return render_template("job-board.html",all_postings=all_postings, best_postings=best_postings)
+    return render_template("job-details.html", posting=posting,best_seekers=best_seekers)
 
 # talent board
 @app.route("/talent-board")

@@ -14,4 +14,18 @@
     <p><strong>Years of experience required:</strong> {{ posting.yoe }}</p>
     <p><strong>Work mode:</strong> {{ posting.work_mode }}</p>
     <p><strong>Location:</strong> {{ posting.location }}</p>
+
+    <hr>
+    <h1>Best seekers for this job:</h1>
+    <ul>
+    {% for seeker in best_seekers %}
+        <li><b>{{seeker.name}} (Match score: {{seeker.match_score}}/100)</b><br/>
+            Email: {{seeker.email}}<br/>
+            Education: {{seeker.education}}<br/>
+            Skills: {% for skill in seeker.skills %}{{ skill.name }}, {% endfor %}<br/>
+            Years of experience: {{seeker.yoe}}<br/>
+            Prefered work mode: {{seeker.prefered_work_mode}}<br/>
+            Prefered location: {{seeker.prefered_location}}<br/><br/>
+        </li>
+    {% endfor %}
 {%endblock%}
