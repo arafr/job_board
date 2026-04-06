@@ -1,0 +1,46 @@
+<diagram program="umletino" version="15.1"><zoom_level>9</zoom_level><element><id>UMLClass</id><coordinates><x>747</x><y>378</y><w>171</w><h>144</h></coordinates><panel_attributes>Skill
+-
+id                                     PK
+name</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>738</x><y>630</y><w>171</w><h>171</h></coordinates><panel_attributes>Seeker
+-
+id                           PK
+email                     UNIQUE
+name
+education
+major
+yoe
+prefered_work_mode
+prefered_work_location
+hash
+type: seeker</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>441</x><y>639</y><w>171</w><h>171</h></coordinates><panel_attributes>Employer
+-
+id                           PK
+email                     UNIQUE
+hash
+type: employer</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>441</x><y>342</y><w>171</w><h>171</h></coordinates><panel_attributes>Posting
+-
+id                                      PK
+title
+company_name
+company_email
+description
+education
+yoe
+work_mode
+location
+created_by        FK (Employer.id)</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>603</x><y>432</y><w>162</w><h>45</h></coordinates><panel_attributes>lt=-
+m1=*
+m2=1..5
+contains &gt;</panel_attributes><additional_attributes>10;20;160;20</additional_attributes></element><element><id>Relation</id><coordinates><x>819</x><y>513</y><w>63</w><h>135</h></coordinates><panel_attributes>lt=-
+m1=1..5
+m2=*
+ has ^</panel_attributes><additional_attributes>10;10;10;130</additional_attributes></element><element><id>Relation</id><coordinates><x>504</x><y>504</y><w>72</w><h>153</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=*
+creates ^</panel_attributes><additional_attributes>10;150;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>666</x><y>306</y><w>27</w><h>162</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>10;10;10;160</additional_attributes></element><element><id>UMLClass</id><coordinates><x>612</x><y>225</y><w>189</w><h>90</h></coordinates><panel_attributes>posting_skills
+-
+posting_id                 FK  (Posting.id)
+skill_id                          FK  (Skill.id)</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>972</x><y>531</y><w>180</w><h>90</h></coordinates><panel_attributes>seeker_skills
+-
+seeker_id                 FK  (Seeker.id)
+skill_id                          FK  (Skill.id)</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>819</x><y>585</y><w>171</w><h>27</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>170;10;10;10</additional_attributes></element></diagram>

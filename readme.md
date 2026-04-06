@@ -1,7 +1,5 @@
-# Database Structure
-
-# Job Board Matching Algorithm:
-Based on the below factors, a match score is given to each job posting. Top 10 jobs with highest match score is shown to seeker.
+# Matching Algorithm:
+Based on the below factors, a match score is given to each job posting/seeker. Top 10 jobs/seekers with highest match score is displayed.
 
 education 20
 yoe 20
