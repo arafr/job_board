@@ -1,12 +1,28 @@
-# Matching Algorithm:
-Based on the below factors, a match score is given to each job posting/seeker. Top 10 jobs/seekers with highest match score is displayed.
+# Employer Worflow
+1. Employer creates an account and logs in. and 
+2. They create a job posting.
+3. Then they view the job posting details and get suggested 10 best matching candidates for the job. 
+4. Employers can also visit the talent board to view all seekers on the platform. They can filter seekers by keyword, YOE, skill, education.
 
-education 20
-yoe 20
-Skills 5 skills x 5 points each = 25
-prefered_work_mode= 15
-prefered_location= 20
-Total = 100
+# Seeker Worflow
+1. Seeker creates an account and logs in.
+2. They visit the job board to view all jobs. They can filter jobs by keyword. The job board also shows the 10 best jobs for them based on their profile.
+3. Seeker can click on a job and view full details of the job posting.
+
+# Matching Algorithm (for finding best 10 seekers and jobs):
+Based on the below factors, a match score is calculated for each job posting and seeker in relation to each other.
+
+Education match 20 points
+
+YOE 20
+
+5 Skills x 5 points each = 25
+
+Work mode match 15
+
+Location match 20
+
+Total 100
 
 # Set up instructions:
 
@@ -38,3 +54,5 @@ pip install -r requirements.txt
 python3 app.py
 ```
 
+## Database
+![UML diagram.](/uml/uml.png "UML diagram")
