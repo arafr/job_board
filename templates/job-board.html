@@ -11,7 +11,7 @@
     <br/>
     <ul>
     {% for posting in all_postings %}
-        <li><a href="{{ url_for('job_details', posting_id=posting.id) }}">{{posting.title}}</a></li>
+        <li><b><a href="{{ url_for('job_details', posting_id=posting.id) }}">{{posting.title}}</a></b></li>
         <p>Company name: {{posting.company_name}} <br/>
         Description: {{posting.description}}</p>
     {% endfor %}
@@ -22,7 +22,7 @@
     <h1>Best jobs for you:</h1>
     <ul>
     {% for posting in best_postings %}
-        <li><a href="{{ url_for('job_details', posting_id=posting.id) }}">{{posting.title}}</a>  (Match score: {{posting.match_score}}/100) <br/>
+        <li><b><a href="{{ url_for('job_details', posting_id=posting.id) }}">{{posting.title}}</a>  (Match score: {{posting.match_score}}/100) </b><br/>
             Company name: {{posting.company_name}}<br/>
             Description: {{posting.description}}<br/><br/>
         </li>
