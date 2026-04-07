@@ -1,5 +1,5 @@
 # Employer Worflow
-1. Employer creates an account and logs in. and 
+1. Employer creates an account and logs in. 
 2. They create a job posting.
 3. Then they view the job posting details and get suggested 10 best matching candidates for the job. 
 4. Employers can also visit the talent board to view all seekers on the platform. They can filter seekers by keyword, YOE, skill, education.
