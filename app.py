@@ -246,7 +246,7 @@ def create_job():
             db.session.add(new_posting)
             db.session.commit()
             flash('Job created successfully')
-            return redirect('/create-job/')
+            return redirect(f'/job-details/{new_posting.id}/')
         except Exception as e:
             print(f"Error occured: {e}")
             flash('An error occurred while creating the job')

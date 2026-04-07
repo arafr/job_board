@@ -3,10 +3,12 @@
 {%block body%}
     <h1>All jobs:</h1>
     <form method="get">
-        <input type="text" id="desc-search" name="desc_search" placeholder="Search jobs (based on description)..">
+        <input class="form-control" type="text" id="desc-search" name="desc_search" placeholder="Search (based on job description)">
+        <br/>
         <button class="btn btn-primary" type="submit">Search</button>
         <button class="btn btn-danger" type="reset, submit">Reset</button>
     </form>
+    <br/>
     <ul>
     {% for posting in all_postings %}
         <li><a href="{{ url_for('job_details', posting_id=posting.id) }}">{{posting.title}}</a></li>

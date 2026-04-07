@@ -3,10 +3,11 @@
 {%block body%}
     <h1>Browse our talent pool:</h1>
     <form method="get">
-        <input id="keyword" name="keyword" type="text" placeholder="Keyword search"/>
-        <!-- search based on skill, education, experience -->
+        <input class="form-control" id="keyword" name="keyword" type="text" placeholder="Keyword"/>
 
-        <select id="education" name="education">
+        <br/>
+
+        <select class="form-select" id="education" name="education">
             <option value="" disabled selected>Education</option>
             <option value="high school">High School</option>
             <option value="bachelors degree">Bachelor's Degree</option>
@@ -14,14 +15,20 @@
             <option value="phd">PhD</option>
         </select>
 
-        <select class="form-select" name="skills" id="skills" aria-label="select skills">
+        <br/>
+
+        <select class="form-select" name="skills" id="skills" aria-label="skill">
             <option value="" disabled selected>Skill</option>
             {% for skill in skills %}
                 <option value="{{skill.name}}">{{skill.name}}</option>
             {% endfor %}
         </select>
 
-        <input id="yoe" name="yoe" type="number" placeholder="Years of Experience"/>
+        <br/>
+
+        <input class="form-control" id="yoe" name="yoe" type="number" placeholder="Years of Experience"/>
+
+        <br/>
 
         <button class="btn btn-primary" type="submit">Search</button>
         <button class="btn btn-danger" type="reset, submit">Reset</button>

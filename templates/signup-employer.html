@@ -3,9 +3,16 @@
 {%block body%}
     <h1>Employer Sign Up</h1>
     <form action="" method="POST">
-        <input id="email" name="email" type="email" placeholder="email" required/>
-        <input id="password" name="password" type="password" placeholder="password" required/>
+        <input class="form-control" id="email" name="email" type="email" placeholder="email" required/>
+
+        <br/>
+
+        <input class="form-control" id="password" name="password" type="password" placeholder="password" required/>
+
+        <br/>
+        
         <button class="btn btn-primary" type="submit">Sign up</button>
     </form>
+
     <a href="{{url_for('login_employer')}}">Login instead</a>
 {%endblock%}

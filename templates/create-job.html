@@ -1,13 +1,18 @@
 {%extends 'base.html'%}
-{%block title%}Homepage{%endblock%}
+{%block title%}Create Job{%endblock%}
 {%block body%}
     <h1>Create a job:</h1>
     <form action="" method="POST">
-        <input id="title" name="title" type="text" placeholder="Job title" required/>
-        <input id="company_name" name="company_name" type="text" placeholder="Company name" required/>
-        <input id="company_email" name="company_email" type="email" placeholder="Company email" required/>
-        <textarea id="description" name="description" placeholder="Job description" required></textarea>
+        <input class="form-control" id="title" name="title" type="text" placeholder="Job title" required/>
+        <br/>
+        <input class="form-control" id="company_name" name="company_name" type="text" placeholder="Company name" required/>
+        <br/>
+        <input class="form-control" id="company_email" name="company_email" type="email" placeholder="Company email" required/>
+        <br/>
+        <textarea class="form-control" rows="3" id="description" name="description" placeholder="Job description" required></textarea>
+        <br/>
 
+        <label for="education">Required Education:</label>
         <div class="form-check">
             <input value="high school" class="form-check-input" type="radio" name="education" id="high_school" required>
             <label class="form-check-label" for="high_school">
@@ -33,6 +38,8 @@
             </label>
         </div>
 
+        <br/>
+
         <label for="skills">Required skills (use ctrl to select multiple, max 5):</label>
         <select class="form-select" name="skills" id="skills" multiple aria-label="select skills" required>
             {% for skill in skills %}
@@ -40,8 +47,13 @@
             {% endfor %}
         </select>
 
-        <input id="yoe" name="yoe" type="number" placeholder="Required years of experience" required/>
+        <br/>
 
+        <input class="form-control" id="yoe" name="yoe" type="number" placeholder="Required years of experience" required/>
+
+        <br/>
+
+        <label for="work_mode">Work mode:</label>
         <div class="form-check">
             <input class="form-check-input" type="radio" name="work_mode" id="remote" value="remote" required>
             <label class="form-check-label" for="remote">
@@ -61,7 +73,9 @@
             </label>
         </div>
 
-        <select id="location" name="location" required>
+        <br/>
+
+        <select class="form-select" id="location" name="location" required>
             <option value="" disabled selected>Prefered Location</option>
             <option value="Sydney">Sydney</option>
             <option value="Melbourne">Melbourne</option>
@@ -71,6 +85,8 @@
             <option value="Hobart">Hobart</option>
         </select>
 
+        <br/>
+        
         <button class="btn btn-primary" type="submit">Create job</button>
     </form>
 

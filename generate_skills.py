@@ -2,8 +2,8 @@ from models import db, Skill
 from app import app
 def generate_skills():
     skills = [
-        'project management',
-        'Aws',
+        'Project management',
+        'AWS',
         'Azure',
         'GCP',
         'Kali Linux',
