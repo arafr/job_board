@@ -3,25 +3,30 @@
 {%block body%}
     <h1>Welcome to the Job Portal</h1>
     <hr>
-    
-    <h2>Employers:</h2>
 
-    {% if current_user.is_authenticated and current_user.type == 'employer' %}
-        <a href="{{url_for('create_job')}}"><button class="btn btn-success">Create job posting</button></a>
-        <a href="{{url_for('talent_board')}}"><button class="btn btn-success">Talent board</button></a>
-        <a href="{{url_for('logout')}}"><button class="btn btn-danger">Logout</button></a>
+    {% if current_user.is_authenticated%}
+        {% if current_user.is_authenticated and current_user.type == 'employer' %}
+            <h2>Employers:</h2>
+            <a href="{{url_for('create_job')}}"><button class="btn btn-success">Create job posting</button></a>
+            <a href="{{url_for('talent_board')}}"><button class="btn btn-success">Talent board</button></a>
+            <a href="{{url_for('logout')}}"><button class="btn btn-danger">Logout</button></a>
         {% else %}
+            
+        {% endif %}
+
+        {% if current_user.is_authenticated and current_user.type == 'seeker' %}
+            <h2>Seekers:</h2>
+            <a href="{{url_for('job_board')}}"><button class="btn btn-primary">Job Board</button></a>
+            <a href="{{url_for('logout')}}"><button class="btn btn-danger">Logout</button></a>
+            {% else %}
+            
+        {% endif %}
+    {% else %}
+        <h2>Employers:</h2>
         <a href="{{url_for('signup_employer')}}"><button class="btn btn-success">Sign up as an employer</button></a>
         <a href="{{url_for('login_employer')}}"><button class="btn btn-success">Login</button></a>
-    {% endif %}
-    
-    <hr>
-
-    <h2>Seekers:</h2>
-    {% if current_user.is_authenticated and current_user.type == 'seeker' %}
-        <a href="{{url_for('job_board')}}"><button class="btn btn-primary">Job Board</button></a>
-        <a href="{{url_for('logout')}}"><button class="btn btn-danger">Logout</button></a>
-        {% else %}
+        <hr>
+        <h2>Seekers:</h2>
         <a href="{{url_for('signup_seeker')}}"><button class="btn btn-primary">Sign up as a seeker</button></a>
         <a href="{{url_for('login_seeker')}}"><button class="btn btn-primary">Login</button></a>
     {% endif %}
