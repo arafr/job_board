@@ -59,7 +59,13 @@ def signup_seeker():
             flash('Please select a maximum of 5 skills')
             return redirect('/signup-seeker')
 
-        new_seeker = Seeker(email=email,name=name,hash=hash,education=education,major=major,yoe=yoe,prefered_work_mode=prefered_work_mode,prefered_location=prefered_location)
+        # check if membership checkbox is true or false
+        if 'membership' in request.form:
+            membership = True
+        else:
+            membership=False
+
+        new_seeker = Seeker(email=email,name=name,hash=hash,education=education,major=major,yoe=yoe,prefered_work_mode=prefered_work_mode,prefered_location=prefered_location,membership=membership)
         
         # append skills into new job seeker
         for skill_name in skills:
@@ -148,10 +154,14 @@ def job_board():
         for skill in current_user.skills:
             if skill in posting.skills:
                 posting.match_score += 5
-    
-    # show top 10 jobs with highest match_score
+
+    # for non-members, show top 10 job posting (sorted by highest match_score)
+    # for members, show all postings (sorted by highest match_score)
     from operator import attrgetter
-    best_postings = sorted(best_postings, key=attrgetter("match_score"), reverse=True)[:10]
+    if current_user.membership==False:
+        best_postings = sorted(best_postings, key=attrgetter("match_score"), reverse=True)[:10]
+    else:
+        best_postings = sorted(best_postings, key=attrgetter("match_score"), reverse=True)
     
     return render_template("job-board.html",all_postings=all_postings, best_postings=best_postings)
 
@@ -162,7 +172,7 @@ def signup_employer():
         email = request.form['email']
         password = request.form['password']
 
-        # getting input from membership checkbox
+        # check if membership checkbox is true or false
         if 'membership' in request.form:
             membership = True
         else:
