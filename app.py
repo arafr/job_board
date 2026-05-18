@@ -161,12 +161,19 @@ def signup_employer():
     if request.method=='POST':
         email = request.form['email']
         password = request.form['password']
+
+        # getting input from membership checkbox
+        if 'membership' in request.form:
+            membership = True
+        else:
+            membership=False
+
         hash = bcrypt.generate_password_hash(password).decode('utf-8')
         if Employer.query.filter_by(email=email).first():
             flash('Email already exists, please login instead')
             return redirect('/signup-employer')
 
-        new_employer = Employer(email=email,hash=hash)
+        new_employer = Employer(email=email,hash=hash,membership=membership)
         try:
             db.session.add(new_employer)
             db.session.commit()
@@ -283,9 +290,15 @@ def job_details(posting_id):
             if skill in posting.skills:
                 seeker.match_score += 5
     
-    # show top 10 seekers with highest match_score
+    # for non-members, show top 10 seekers (sorted by highest match_score)
+    # for members, show all seekers (sorted by highest match_score)
     from operator import attrgetter
-    best_seekers = sorted(best_seekers, key=attrgetter("match_score"), reverse=True)[:10]
+    if current_user.membership==False:
+        # non members can only see top 10 best seekers for the job
+        best_seekers = sorted(best_seekers, key=attrgetter("match_score"), reverse=True)[:10]
+    else:
+        # members aren't limited to only 10
+        best_seekers = sorted(best_seekers, key=attrgetter("match_score"), reverse=True)
     
     return render_template("job-details.html", posting=posting,best_seekers=best_seekers)
 
@@ -341,7 +354,7 @@ def logout():
     return redirect('/')
 
 if __name__=="__main__":
-    from generate_skills import generate_skills
+    from templates.scripts.generate_skills import generate_skills
     with app.app_context():   
         db.create_all()
         generate_skills()
