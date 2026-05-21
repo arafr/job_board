@@ -2,18 +2,63 @@
 {%block title%}Job Board{%endblock%}
 {%block body%}
     <h1>All jobs:</h1>
-    <form method="get">
-        <input class="form-control" type="text" id="desc-search" name="desc_search" placeholder="Search (based on job description)">
+    <form method="GET">
+        <input class="form-control" id="keyword" name="keyword" type="text" placeholder="Keyword" value="{{request.args.get('keyword', '')}}"/>
+
         <br/>
+
+        <select class="form-select" id="location" name="location">
+            <option value="" disabled {{ 'selected' if not location else '' }}>Location</option>
+            <option value="Sydney" {{'selected' if request.args.get('location') == 'Sydney' else ''}}>Sydney</option>
+            <option value="Melbourne" {{'selected' if request.args.get('location') == 'Melbourne' else ''}}>Melbourne</option>
+            <option value="Adelaide" {{'selected' if request.args.get('location') == 'Adelaide' else ''}}>Adelaide</option>
+            <option value="Perth" {{'selected' if request.args.get('location') == 'Perth' else ''}}>Perth</option>
+            <option value="Canberra" {{'selected' if request.args.get('location') == 'Canberra' else ''}}>Canberra</option>
+            <option value="Hobart" {{'selected' if request.args.get('location') == 'Hobart' else ''}}>Hobart</option>
+        </select>
+
+        <br/>
+
+        <select class="form-select" id="job_type" name="job_type">
+            <option value="" disabled {{ 'selected' if not job_type else '' }}>Job type</option>
+            <option value="full-time" {{'selected' if request.args.get('job_type') == 'full-time' else ''}}>Full-time</option>
+            <option value="part-time" {{'selected' if request.args.get('job_type') == 'part-time' else ''}}>Part-time</option>
+            <option value="contract" {{'selected' if request.args.get('job_type') == 'contract' else ''}}>Contract</option>
+        </select>
+
+        <br/>
+
+        <select class="form-select" id="education" name="education">
+            <option value="" disabled {{ 'selected' if not education else '' }}>Education</option>
+            <option value="high school" {{'selected' if request.args.get('education') == 'high school' else ''}}>High School</option>
+            <option value="bachelors degree" {{'selected' if request.args.get('education') == 'bachelors degree' else ''}}>Bachelor's Degree</option>
+            <option value="masters degree" {{'selected' if request.args.get('education') == 'masters degree' else ''}}>Master's Degree</option>
+            <option value="phd" {{'selected' if request.args.get('education') == 'phd' else ''}}>PhD</option>
+        </select>
+
+        <br/>
+
+        <select class="form-select" id="work_mode" name="work_mode">
+            <option value="" disabled {{ 'selected' if not work_mode else '' }}>Work Mode</option>
+            <option value="on-site" {{'selected' if request.args.get('work_mode') == 'on-site' else ''}}>On-site</option>
+            <option value="remote" {{'selected' if request.args.get('work_mode') == 'remote' else ''}}>Remote</option>
+            <option value="hybrid" {{'selected' if request.args.get('work_mode') == 'hybrid' else ''}}>Hybrid</option>
+        </select>
+
+        <br/>
+
         <button class="btn btn-primary" type="submit">Search</button>
-        <button class="btn btn-danger" type="reset, submit">Reset</button>
+        <a class="btn btn-outline-danger" href="{{ url_for('job_board') }}">Reset</a>
     </form>
     <br/>
     <ul>
-    {% for posting in all_postings %}
+    {% for posting in postings_query %}
         <li><b><a href="{{ url_for('job_details', posting_id=posting.id) }}">{{posting.title}}</a></b></li>
-        <p>Company name: {{posting.company_name}} <br/>
-        Description: {{posting.description}}</p>
+        <p>Company name: {{posting.company_name}}<br/>
+        Description: {{posting.description}}<br/>
+        Location: {{posting.location}}<br/>
+        Work mode: {{posting.work_mode}}<br/><br/>
+        </p>
     {% endfor %}
     </ul>
 
@@ -24,7 +69,9 @@
     {% for posting in best_postings %}
         <li><b><a href="{{ url_for('job_details', posting_id=posting.id) }}">{{posting.title}}</a>  (Match score: {{posting.match_score}}/100) </b><br/>
             Company name: {{posting.company_name}}<br/>
-            Description: {{posting.description}}<br/><br/>
+            Description: {{posting.description}}<br/>
+            Location: {{posting.location}}<br/>
+            Work mode: {{posting.work_mode}}<br/><br/>
         </li>
     {% endfor %}
     </ul>

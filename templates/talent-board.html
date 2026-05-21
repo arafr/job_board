@@ -3,35 +3,35 @@
 {%block body%}
     <h1>Browse our talent pool:</h1>
     <form method="get">
-        <input class="form-control" id="keyword" name="keyword" type="text" placeholder="Keyword"/>
+        <input class="form-control" id="keyword" name="keyword" type="text" placeholder="Keyword" value="{{request.args.get('keyword', '')}}"/>
 
         <br/>
 
         <select class="form-select" id="education" name="education">
-            <option value="" disabled selected>Education</option>
-            <option value="high school">High School</option>
-            <option value="bachelors degree">Bachelor's Degree</option>
-            <option value="masters degree">Master's Degree</option>
-            <option value="phd">PhD</option>
+            <option value="" disabled {{ 'selected' if not education else '' }}>Education</option>
+            <option value="high school" {{'selected' if request.args.get('education') == 'high school' else ''}}>High School</option>
+            <option value="bachelors degree" {{'selected' if request.args.get('education') == 'bachelors degree' else ''}}>Bachelor's Degree</option>
+            <option value="masters degree" {{'selected' if request.args.get('education') == 'masters degree' else ''}}>Master's Degree</option>
+            <option value="phd" {{'selected' if request.args.get('education') == 'phd' else ''}}>PhD</option>
         </select>
 
         <br/>
 
         <select class="form-select" name="skills" id="skills" aria-label="skill">
-            <option value="" disabled selected>Skill</option>
+            <option value="" disabled {{ 'selected' if not request.args.get('skills') else '' }}>Skill</option>
             {% for skill in skills %}
-                <option value="{{skill.name}}">{{skill.name}}</option>
+                <option value="{{skill.name}}" {{'selected' if request.args.get('skills') == skill.name else ''}}>{{skill.name}}</option>
             {% endfor %}
         </select>
 
         <br/>
 
-        <input class="form-control" id="yoe" name="yoe" type="number" placeholder="Years of Experience"/>
+        <input class="form-control" id="yoe" name="yoe" type="number" placeholder="Years of Experience" value="{{request.args.get('yoe', '')}}"/>
 
         <br/>
 
         <button class="btn btn-primary" type="submit">Search</button>
-        <button class="btn btn-danger" type="reset, submit">Reset</button>
+        <a class="btn btn-outline-danger" href="{{ url_for('talent_board') }}">Reset</a>
     </form>
     <br />
     <ul>

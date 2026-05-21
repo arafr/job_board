@@ -105,14 +105,45 @@ def login_seeker():
 @app.route("/job-board/")
 @login_required
 def job_board():
-    # REQUIREMENT 1: ALL JOBS WITH KEYWORD SEARCH (JOB DESC) 
-    desc_search = request.args.get('desc_search')
-    if desc_search:
-        all_postings = Posting.query.filter(Posting.description.contains(desc_search)).all()
-    else:
-        all_postings = Posting.query.all()
+    # show all job postings by default, if any filters are used, apply them
+    # get value from url parameters (args)
+    keyword = request.args.get('keyword')
+    job_type = request.args.get('job_type')
+    work_mode = request.args.get('work_mode')
+    location = request.args.get('location')
+    education = request.args.get('education')
 
-    # REQUIREMENT 2: BEST MATCHING JOBS
+    # keyword search will look through all of seeker's attributes and try to find a match.
+    filters =[]
+    if keyword:
+        filters.append(
+            Posting.title.contains(keyword) |
+            Posting.description.contains(keyword) |
+            Posting.company_name.contains(keyword) |
+            Posting.education.contains(keyword) |
+            Posting.work_mode.contains(keyword) |
+            Posting.location.contains(keyword)
+        )
+
+    # check if filters exist, if they do, add them to the query
+    if education:
+        filters.append(Posting.education == education)
+    if job_type:
+        filters.append(Posting.job_type == job_type)
+    if work_mode:
+        filters.append(Posting.work_mode == work_mode)
+    if location:
+        filters.append(Posting.location == location)
+
+    # if filters exist, apply them to query, otherwise show all seekers
+    if filters:
+        postings_query = Posting.query.filter(*filters).all()
+        if postings_query == []:
+            flash('No postings found matching your criteria.')
+    else:
+        postings_query = Posting.query.all()
+
+    # BEST MATCHING JOBS SECTION
 
     # education level of seeker needs to be equal or higher than job posting
     education = current_user.education
@@ -163,7 +194,7 @@ def job_board():
     else:
         best_postings = sorted(best_postings, key=attrgetter("match_score"), reverse=True)
     
-    return render_template("job-board.html",all_postings=all_postings, best_postings=best_postings)
+    return render_template("job-board.html",postings_query=postings_query, best_postings=best_postings)
 
 # create employer account
 @app.route("/signup-employer",methods=['GET','POST'])
@@ -232,9 +263,10 @@ def create_job():
             return redirect('/create-job/')
         
         yoe = request.form['yoe']
+        job_type = request.form['job_type']
         work_mode = request.form['work_mode']
         location = request.form['location']
-        new_posting = Posting(title=title, company_name=company_name, company_email=company_email, education=education,description=description, yoe=yoe, work_mode=work_mode, location=location, created_by=current_user.id)
+        new_posting = Posting(title=title, company_name=company_name, company_email=company_email, education=education,description=description, yoe=yoe, job_type=job_type, work_mode=work_mode, location=location, created_by=current_user.id)
         
         # append skills into new job seeker
         for skill_name in skills:

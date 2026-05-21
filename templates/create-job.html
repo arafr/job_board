@@ -64,6 +64,40 @@
 
         <br/>
 
+        <select class="form-select" id="location" name="location" required>
+            <option value="" disabled selected>Prefered Location</option>
+            <option value="Sydney">Sydney</option>
+            <option value="Melbourne">Melbourne</option>
+            <option value="Adelaide">Adelaide</option>
+            <option value="Perth">Perth</option>
+            <option value="Canberra">Canberra</option>
+            <option value="Hobart">Hobart</option>
+        </select>
+
+        <br/>
+
+        <label for="job_type">Job type:</label>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="job_type" id="full_time" value="full-time" required>
+            <label class="form-check-label" for="full_time">
+                Full-time
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="job_type" id="part_time" value="part-time" required>
+            <label class="form-check-label" for="part_time">
+                Part-time
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="job_type" id="contract" value="contract" required>
+            <label class="form-check-label" for="contract">
+                Contract
+            </label>
+        </div>
+
+        <br/>
+
         <label for="work_mode">Work mode:</label>
         <div class="form-check">
             <input class="form-check-input" type="radio" name="work_mode" id="remote" value="remote" required>
@@ -83,18 +117,6 @@
                 Hybrid
             </label>
         </div>
-
-        <br/>
-
-        <select class="form-select" id="location" name="location" required>
-            <option value="" disabled selected>Prefered Location</option>
-            <option value="Sydney">Sydney</option>
-            <option value="Melbourne">Melbourne</option>
-            <option value="Adelaide">Adelaide</option>
-            <option value="Perth">Perth</option>
-            <option value="Canberra">Canberra</option>
-            <option value="Hobart">Hobart</option>
-        </select>
 
         <br/>
         

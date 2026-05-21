@@ -49,6 +49,7 @@ class Posting(db.Model):
     company_name=db.Column(db.String(10),nullable=False)
     company_email=db.Column(db.String(20),nullable=False)
     description=db.Column(db.String(1000),nullable=False)
+    job_type=db.Column(db.String(10),nullable=False)
     education=db.Column(db.String(20),nullable=False)
     yoe=db.Column(db.Integer,nullable=False)
     work_mode=db.Column(db.String(20),nullable=False)
