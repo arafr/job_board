@@ -3,7 +3,7 @@
 {%block body%}
     <h1>All jobs:</h1>
     <form method="GET">
-        <input class="form-control" id="keyword" name="keyword" type="text" placeholder="Keyword" value="{{request.args.get('keyword', '')}}"/>
+        <input class="form-control" id="title" name="title" type="text" placeholder="Job Title (fuzzy search enabled)" value="{{request.args.get('title', '')}}"/>
 
         <br/>
 

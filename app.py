@@ -19,6 +19,9 @@ import os
 # environment variable for session key. Also a default key for local users.
 app.secret_key = os.environ.get("SECRET_KEY",'mjrajrjk294999$(@(@(.)))')
 
+# for fuzzy matching
+from rapidfuzz import fuzz
+
 @login_manager.user_loader
 def load_user(id):
     if 'type' in session:
@@ -106,25 +109,16 @@ def login_seeker():
 @login_required
 def job_board():
     # show all job postings by default, if any filters are used, apply them
+    postings_query=[]
+
     # get value from url parameters (args)
-    keyword = request.args.get('keyword')
+    title = request.args.get('title')
     job_type = request.args.get('job_type')
     work_mode = request.args.get('work_mode')
     location = request.args.get('location')
     education = request.args.get('education')
-
-    # keyword search will look through all of seeker's attributes and try to find a match.
-    filters =[]
-    if keyword:
-        filters.append(
-            Posting.title.contains(keyword) |
-            Posting.description.contains(keyword) |
-            Posting.company_name.contains(keyword) |
-            Posting.education.contains(keyword) |
-            Posting.work_mode.contains(keyword) |
-            Posting.location.contains(keyword)
-        )
-
+    
+    filters=[]
     # check if filters exist, if they do, add them to the query
     if education:
         filters.append(Posting.education == education)
@@ -136,12 +130,28 @@ def job_board():
         filters.append(Posting.location == location)
 
     # if filters exist, apply them to query, otherwise show all seekers
-    if filters:
+
+    # apply both title and filter search
+    if title and filters:
         postings_query = Posting.query.filter(*filters).all()
-        if postings_query == []:
-            flash('No postings found matching your criteria.')
-    else:
+
+        for job in postings_query:
+            search_match_ratio = fuzz.WRatio(title, job.title)
+            if search_match_ratio < 70:
+                postings_query.remove(job)
+    # just apply title
+    elif title:
         postings_query = Posting.query.all()
+        for job in postings_query:
+            search_match_ratio = fuzz.WRatio(title, job.title)
+            if search_match_ratio < 70:
+                postings_query.remove(job)
+    # just apply filters
+    elif filters:
+        postings_query = Posting.query.filter(*filters).all()
+    # if no title or filter search used, return all job postings
+    else:
+        postings_query = Posting.query.all() # all jobs
 
     # BEST MATCHING JOBS SECTION
 
