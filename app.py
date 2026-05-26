@@ -108,6 +108,10 @@ def login_seeker():
 @app.route("/job-board/")
 @login_required
 def job_board():
+    # prevent employers from accessing job board
+    if current_user.type != 'seeker':
+        flash('Only job seekers can access the job board')
+        return redirect('/')
     # show all job postings by default, if any filters are used, apply them
     postings_query=[]
 
@@ -256,6 +260,10 @@ def login_employer():
 @app.route("/create-job/",methods=['GET','POST'])
 @login_required
 def create_job():
+    # prevent job seekers from accessing create job page
+    if current_user.type != 'employer':
+        flash('Only employers can create job postings')
+        return redirect('/')
     if request.method=='GET':
         jobs = Posting.query.filter_by(created_by=current_user.id).all()
         skills = Skill.query.all()
@@ -358,6 +366,11 @@ def job_details(posting_id):
 @app.route("/talent-board")
 @login_required
 def talent_board():
+    # prevent job seekers from accessing create job page
+    if current_user.type != 'employer':
+        flash('Only employers can view talent board')
+        return redirect('/')
+
     # show all job seekers by default, if any filters are used, apply them
     # get value from url parameters (args)
     keyword = request.args.get('keyword')
