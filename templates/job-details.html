@@ -2,6 +2,7 @@
 {%block title%}Job Details{%endblock%}
 {%block body%}
     <h1>Job title: {{ posting.title }}</h1>
+    <br/>
     <p><strong>Company:</strong> {{ posting.company_name }}</p>
     <p><strong>Email:</strong> {{ posting.company_email }}</p>
     <p><strong>Description:</strong> {{ posting.description }}</p>
@@ -18,6 +19,7 @@
 
     <hr>
     <h1>Best seekers for this job:</h1>
+    <br/>
     <ul>
     {% for seeker in best_seekers %}
         <li><b>{{seeker.name}} (Match score: {{seeker.match_score}}/100)</b><br/>

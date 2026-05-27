@@ -1,34 +1,55 @@
 {%extends 'base.html'%}
 {%block title%}Homepage{%endblock%}
 {%block body%}
-    <h1>Welcome to the Job Portal</h1>
-    <hr>
+    <h1>Welcome to the InNeed Job Site👋</h1>
+    <br/>
 
-    {% if current_user.is_authenticated%}
-        {% if current_user.is_authenticated and current_user.type == 'employer' %}
-            <h2>Employers:</h2>
-            <a href="{{url_for('create_job')}}"><button class="btn btn-success">Job Services</button></a>
-            <a href="{{url_for('talent_board')}}"><button class="btn btn-success">Browse Talent</button></a>
-            <a href="{{url_for('logout')}}"><button class="btn btn-danger">Logout</button></a>
-        {% else %}
-            
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <!-- if user is not authenticated or user is a job seeker, show seeker card -->
+        {% if not current_user.is_authenticated or current_user.type == 'seeker' %}
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    
+                    <h2 class="card-title"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+</svg> Seekers</h2>
+                    <p class="card-text">Find jobs that match your skills and experience.</p>
+                    <!-- if user is already logged in, show job board and logout options -->
+                    {% if current_user.is_authenticated %}
+                        <a href="{{url_for('job_board')}}"><button class="btn btn-primary">Job Board</button></a>
+                        <a href="{{url_for('logout')}}"><button class="btn btn-outline-danger">Logout</button></a>
+                    {% else %}
+                        <a href="{{url_for('signup_seeker')}}"><button class="btn btn-primary">Sign up as seeker</button></a>
+                        <a href="{{url_for('login_seeker')}}"><button class="btn btn-outline-primary">Login</button></a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
         {% endif %}
-
-        {% if current_user.is_authenticated and current_user.type == 'seeker' %}
-            <h2>Seekers:</h2>
-            <a href="{{url_for('job_board')}}"><button class="btn btn-primary">Job Board</button></a>
-            <a href="{{url_for('logout')}}"><button class="btn btn-danger">Logout</button></a>
-            {% else %}
-            
+        <!-- if user is not authenticated or user is an employer, show employer card -->
+        {% if not current_user.is_authenticated or current_user.type == 'employer' %}
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-briefcase" viewBox="0 0 16 16">
+  <path d="M6.5 1A1.5 1.5 0 0 0 5 2.5V3H1.5A1.5 1.5 0 0 0 0 4.5v8A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-8A1.5 1.5 0 0 0 14.5 3H11v-.5A1.5 1.5 0 0 0 9.5 1zm0 1h3a.5.5 0 0 1 .5.5V3H6v-.5a.5.5 0 0 1 .5-.5m1.886 6.914L15 7.151V12.5a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5V7.15l6.614 1.764a1.5 1.5 0 0 0 .772 0M1.5 4h13a.5.5 0 0 1 .5.5v1.616L8.129 7.948a.5.5 0 0 1-.258 0L1 6.116V4.5a.5.5 0 0 1 .5-.5"/>
+</svg> Employers</h2>
+                    <p class="card-text">Find top talent and grow your business.</p>
+                    <!-- if user is already logged in, show post job, browse talent and logout options -->
+                    {% if current_user.is_authenticated %}
+                        <a href="{{url_for('create_job')}}"><button class="btn btn-primary">Post Job</button></a>
+                        <a href="{{url_for('talent_board')}}"><button class="btn btn-primary">Browse Talent</button></a>
+                        <a href="{{url_for('logout')}}"><button class="btn btn-outline-danger">Logout</button></a>
+                    {% else %}
+                        <a href="{{url_for('signup_employer')}}"><button class="btn btn-primary">Sign up as employer</button></a>
+                        <a href="{{url_for('login_employer')}}"><button class="btn btn-outline-primary">Login</button></a>
+                    {% endif %}
+                    
+                </div>
+            </div>
+        </div>
         {% endif %}
-    {% else %}
-        <h2>Employers:</h2>
-        <a href="{{url_for('signup_employer')}}"><button class="btn btn-success">Sign up as an employer</button></a>
-        <a href="{{url_for('login_employer')}}"><button class="btn btn-success">Login</button></a>
-        <hr>
-        <h2>Seekers:</h2>
-        <a href="{{url_for('signup_seeker')}}"><button class="btn btn-primary">Sign up as a seeker</button></a>
-        <a href="{{url_for('login_seeker')}}"><button class="btn btn-primary">Login</button></a>
-    {% endif %}
+    </div>
 
 {%endblock%}

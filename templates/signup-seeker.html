@@ -2,6 +2,7 @@
 {%block title%}Sign up as job seeker{%endblock%}
 {%block body%}
     <h1>Job Seeker Sign Up</h1>
+    <br/>
     <form action="" method="POST">
         <input class="form-control" id="email" name="email" type="email" placeholder="Email" required/>
         <br/>
@@ -9,7 +10,8 @@
         <br/>
 
         <input class="form-control" id="password" name="password" type="password" placeholder="Password" required/>
-        <br/>
+        <small id="emailHelp" class="form-text text-muted">Password must be at least 8 characters long.</small>
+        <br/><br/>
 
         <select class="form-select" id="education" name="education" required>
             <option value="" disabled selected>Education</option>

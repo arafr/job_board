@@ -2,14 +2,16 @@
 {%block title%}Sign up as employer{%endblock%}
 {%block body%}
     <h1>Employer Sign Up</h1>
+    <br/>
     <form action="" method="POST">
         <input class="form-control" id="email" name="email" type="email" placeholder="email" required/>
 
         <br/>
 
         <input class="form-control" id="password" name="password" type="password" placeholder="password" required/>
-
-        <br/>
+        <small id="emailHelp" class="form-text text-muted">Password must be at least 8 characters long.</small>
+        
+        <br/><br/>
 
         <!-- through this checkbox, users can get membership -->
         <div class="form-check">
