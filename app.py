@@ -46,6 +46,12 @@ def signup_seeker():
         email = request.form['email']
         name = request.form['name']
         password = request.form['password']
+
+        # password validation
+        if len(password) < 8:
+            flash('Password must be at least 8 characters long')
+            return redirect('/signup-seeker')
+
         education = request.form['education']
         major = request.form['major']
         yoe = request.form['yoe']
@@ -216,6 +222,11 @@ def signup_employer():
     if request.method=='POST':
         email = request.form['email']
         password = request.form['password']
+
+        # password validation
+        if len(password) < 8:
+            flash('Password must be at least 8 characters long')
+            return redirect('/signup-employer')
 
         # check if membership checkbox is true or false
         if 'membership' in request.form:
