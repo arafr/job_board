@@ -1,15 +1,15 @@
 # Employer Worflow
 1. Employer creates an account and logs in. 
 2. They create a job posting.
-3. Then they view the job posting details and get suggested 10 best matching candidates for the job. 
-4. Employers can also visit the talent board to view all seekers on the platform. They can filter seekers by keyword, YOE, skill, education.
+3. Then they view the job posting details and get suggested matching candidates for the job. They will see 10 best candidates max if they are not a member, while members can see unlimited candidate profiles.
+4. Employers can also visit the talent board to view all seekers on the platform. They can use search and filter to find seekers.
 
 # Seeker Worflow
 1. Seeker creates an account and logs in.
-2. They visit the job board to view all jobs. They can filter jobs by keyword. The job board also shows the 10 best jobs for them based on their profile.
+2. They visit the job board to view all jobs. They can search and filter for their preferred jobs. The best jobs for you section shows them 10 best jobs max if they are not a member, unlimited jobs if they are.
 3. Seeker can click on a job and view full details of the job posting.
 
-# Matching Algorithm (for finding best 10 seekers and jobs):
+# Matching Algorithm (for finding best seekers and jobs):
 Based on the below factors, a match score is calculated for each job posting and seeker in relation to each other.
 
 Education match 20 points
@@ -55,4 +55,4 @@ python3 app.py
 ```
 
 ## Database
-![UML diagram.](/uml/uml.png "UML diagram")
+![UML diagram.](/uml/updated_uml.png "UML diagram")
