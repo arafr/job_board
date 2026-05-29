@@ -34,14 +34,14 @@ class Seeker(db.Model, UserMixin):
     type=db.Column(db.String(20),default='seeker')
     # this relationship targets the Skill model, backref seekers creates Skill.seekers for easy access.
     skills = db.relationship('Skill',secondary='seeker_skills',backref='seekers')
-    membership=db.Column(db.Boolean)
+    membership=db.Column(db.Boolean,default=False)
 
 class Employer(db.Model, UserMixin):
     id=db.Column(db.Integer, primary_key=True)
     email=db.Column(db.String(20),unique=True,nullable=False)
     hash=db.Column(db.String(20),nullable=False)
     type=db.Column(db.String(20),default='employer')
-    membership=db.Column(db.Boolean)
+    membership=db.Column(db.Boolean, default=False)
 
 class Posting(db.Model):
     id=db.Column(db.Integer, primary_key=True)

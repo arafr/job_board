@@ -1,5 +1,4 @@
 from flask import Flask, render_template,request,redirect, flash,session
-from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
@@ -41,7 +40,7 @@ def index():
 @app.route("/signup-seeker",methods=['GET','POST'])
 def signup_seeker():
     if current_user.is_authenticated:
-        return redirect('/job-board/')
+        return redirect('/job-board')
     if request.method=='POST':
         email = request.form['email']
         name = request.form['name']
@@ -75,7 +74,7 @@ def signup_seeker():
             membership=False
 
         new_seeker = Seeker(email=email,name=name,hash=hash,education=education,major=major,yoe=yoe,prefered_work_mode=prefered_work_mode,prefered_location=prefered_location,membership=membership)
-        
+        db.session.add(new_seeker)
         # append skills into new job seeker
         for skill_name in skills:
             skill = Skill.query.filter_by(name=skill_name).first()
@@ -111,7 +110,7 @@ def login_seeker():
             return redirect('/login-seeker')
 
 # job board
-@app.route("/job-board/")
+@app.route("/job-board")
 @login_required
 def job_board():
     # prevent employers from accessing job board
@@ -139,7 +138,7 @@ def job_board():
     if location:
         filters.append(Posting.location == location)
 
-    # if filters exist, apply them to query, otherwise show all seekers
+    # if filters exist, apply them to query, otherwise show all jobs
 
     # apply both title and filter search
     if title and filters:
@@ -161,12 +160,15 @@ def job_board():
         postings_query = Posting.query.filter(*filters).all()
     # if no title or filter search used, return all job postings
     else:
-        postings_query = Posting.query.all() # all jobs
+        postings_query = Posting.query.limit(5).all() # all jobs
+
+    if postings_query==[]:
+        flash('No jobs found.')
 
     # BEST MATCHING JOBS SECTION
 
     # education level of seeker needs to be equal or higher than job posting
-    education = current_user.education
+    education = current_user.education.lower()
     if education == 'high school':
         education_level = ['high school']
     elif education == "bachelors degree":
@@ -176,6 +178,7 @@ def job_board():
     elif education == "phd":
         education_level = ['high school','bachelors degree','masters degree','phd']
     else:
+        # this should never happen as users are only allowed to choose from select html element
         flash('Invalid education level')
         return redirect('/')
     
@@ -268,7 +271,7 @@ def login_employer():
             flash('Invalid email or password')
             return redirect('/login-employer')
 
-@app.route("/create-job/",methods=['GET','POST'])
+@app.route("/create-job",methods=['GET','POST'])
 @login_required
 def create_job():
     # prevent job seekers from accessing create job page
@@ -289,7 +292,7 @@ def create_job():
         skills = request.form.getlist('skills')
         if len(skills) > 5:
             flash('Please select a maximum of 5 skills')
-            return redirect('/create-job/')
+            return redirect('/create-job')
         
         yoe = request.form['yoe']
         job_type = request.form['job_type']
@@ -306,17 +309,17 @@ def create_job():
             db.session.add(new_posting)
             db.session.commit()
             flash('Job created successfully')
-            return redirect(f'/job-details/{new_posting.id}/')
+            return redirect(f'/job-details/{new_posting.id}')
         except Exception as e:
             print(f"Error occured: {e}")
             flash('An error occurred while creating the job')
-            return redirect('/create-job/')
+            return redirect('/create-job')
 
 # individual job details page
-@app.route("/job-details/<int:posting_id>/")
+@app.route("/job-details/<int:posting_id>")
 def job_details(posting_id):
     # get job posting details
-    posting = Posting.query.get_or_404(posting_id)
+    posting = db.session.get(Posting, posting_id)
 
     # REQUIREMENT: GET BEST MATCHING SEEKERS FOR THE JOB POSTING
 
@@ -413,7 +416,7 @@ def talent_board():
     if filters:
         seekers_query = Seeker.query.filter(*filters).all()
         if seekers_query == []:
-            flash('No seekers found matching your criteria.')
+            flash('No seekers found.')
     else:
         seekers_query = Seeker.query.all()
 
