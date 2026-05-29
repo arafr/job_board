@@ -163,7 +163,7 @@ def job_board():
         postings_query = Posting.query.limit(5).all() # all jobs
 
     if postings_query==[]:
-        flash('No jobs found.')
+        flash('jobs found.')
 
     # BEST MATCHING JOBS SECTION
 
